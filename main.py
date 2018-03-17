@@ -46,32 +46,46 @@ def main():
 def handle_dialog(req, res):
     user_id = req['session']['user_id']
     if req['session']['new']:
-        # Это новый пользователь.
-        # Инициализируем сессию и поприветствуем его.
         t = [0]
         user_id_lib[user_id] = t
         res['response']['text'] = 'Привет! Ты первый раз, тебе надо добавить данные, введи твоё имя'
         return
 
     if req['request']['command'] and user_id_lib[user_id][0] == 0:
-        # Это новый пользователь.
-        # Инициализируем сессию и поприветствуем его.
         t = [req['request']['command'], 0]
         user_id_lib[user_id] = t
-        res['response']['text'] = 'А теперь веди свой номер автомобиля'
-        # res['response']['buttons'] = getSuggests(user_id)
+        res['response']['text'] = 'А теперь ' + user_id_lib[user_id][0]+' веди свой номер автомобиля'
         return
 
     if req['request']['command'] and user_id_lib[user_id][1] == 0:
-        # Это новый пользователь.
-        # Инициализируем сессию и поприветствуем его.
         p = req['request']['command']
         t = [user_id_lib[user_id][0], p, 0]
         user_id_lib[user_id] = t
-        res['response']['text'] = 'C какой стороны у тебя бак'
-        # res['response']['buttons'] = getSuggests(user_id)
+        res['response']['text'] = 'C какой стороны у вас бак ' + user_id_lib[user_id][1]
+        res['response']['buttons'] = [{'title': suggest, 'hide': True}for suggest in ['слева', 'справа']]
         return
 
+    if req['request']['command'] and user_id_lib[user_id][2] == 0:
+        p = req['request']['command']
+        if p == 'слева':
+            p = 1
+        else:
+            p = 2
+        res['response']['text'] = p
+        t = [user_id_lib[user_id][0], user_id_lib[user_id][1], p, 0]
+        user_id_lib[user_id] = t
+        res['response']['text'] = 'у вас есть наша карта лояльности?'
+        return
+
+    '''if req['request']['command'] and user_id_lib[user_id][2] == 0:
+        # Это новый пользователь.
+        # Инициализируем сессию и поприветствуем его.
+        p = req['request']['command'] in 
+        t = [user_id_lib[user_id][0], user_id_lib[user_id][1],p, 0]
+        user_id_lib[user_id] = t
+        res['response']['text'] = 'C какой стороны у тебя бак'
+        # res['response']['buttons'] = getSuggests(user_id)
+        return'''
 
     # Обрабатываем ответ пользователя.
     '''if req['request']['command'].lower() in [
