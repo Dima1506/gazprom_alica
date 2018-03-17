@@ -17,12 +17,11 @@ logging.basicConfig(level=logging.DEBUG)
 sessionStorage = {}
 user_id_lib = {}
 sesaian_id = {}
-ras_nomer = ['а', 'в', 'е', 'к', 'м', 'о', 'р', 'с', 'т', 'у', 'х']
-cost_water = [20, 30, 50]
+ras_nomer = ['а','в','е','к','м','о','р','с','т','у','х']
+cost_water = [20,30,50]
 toplivo = [40.50, 37.50, 39.80]
 
 ls2 = ''
-
 
 # Задаем параметры приложения Flask.
 @app.route("/", methods=['POST'])
@@ -121,11 +120,10 @@ def handle_dialog(req, res):
         res['response']['text'] = 'Спасибо за введенные данные!!' + ' Возможные команды: где заправиться'
         return
     if req['request']['command'] != 'где заправиться' and user_id_lib[user_id][3] >= 2 and user_id_lib[user_id][4] == 0:
-        res['response'][
-            'text'] = 'Вы выбрали неправильный ответ, повторите попытку' + ' Возможные команды: где заправиться'
+        res['response']['text'] = 'Вы выбрали неправильный ответ, повторите попытку' + ' Возможные команды: где заправиться'
         return
     if req['request']['command'] == 'где заправиться' and user_id_lib[user_id][3] >= 2 and user_id_lib[user_id][4] == 0:
-        sesaian_id[req['session']['session_id']] = [0, 0, 0, 0, '']
+        sesaian_id[req['session']['session_id']] = [0, 0, 0, 0]
         res['response']['text'] = 'Заправка газпром через ' + str(5) + ' км. Выберите топливо:'
         res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in ['95', '92', 'ДТ']]
         user_id_lib[user_id][4] = 1
@@ -155,9 +153,9 @@ def handle_dialog(req, res):
         sesaian_id[req['session']['session_id']][1] = req['request']['command']
         st = 'Вам нужно ' + req['request']['command'] + ' литров бензина ' + sesaian_id[req['session']['session_id']][2]
         ft = toplivo[sesaian_id[req['session']['session_id']][0]]
-        ft = ft * int(sesaian_id[req['session']['session_id']][1])
+        ft = str(ft * int(sesaian_id[req['session']['session_id']][1]))
         sesaian_id[req['session']['session_id']][1] = ft
-        st = st + '. Это будет стоить ' + str(ft)
+        st = st + '. Это будет стоить ' + ft
         st = st + ' рублей.'
         st = st + '              Хотите купить другую нашу продукцию?'
         res['response']['text'] = st
@@ -167,12 +165,10 @@ def handle_dialog(req, res):
     if req['request']['command'] and user_id_lib[user_id][3] >= 2 and user_id_lib[user_id][4] == 3:
         if req['request']['command'] == 'да':
             res['response']['text'] = 'Выбитрите тип продукции:'
-            res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in
-                                          ['ДрайвКафе', 'Магазин-Eда', 'Магазин-НеEда']]
+            res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in ['ДрайвКафе', 'Магазин-Eда', 'Магазин-НеEда']]
 
         elif req['request']['command'] == 'нет':
-            res['response']['text'] = 'Спасибо за покупки. С вас ' + sesaian_id[req['session']['session_id']][
-                1] + ' рублей.'
+            res['response']['text'] = 'Спасибо за покупки. С вас ' + sesaian_id[req['session']['session_id']][1] + ' рублей.'
         else:
             res['response']['text'] = 'Вы выбрали неправильный ответ, повторите попытку'
             res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in ['да', 'нет']]
@@ -184,8 +180,7 @@ def handle_dialog(req, res):
             return
         elif req['request']['command'] == 'Магазин-Eда':
             res['response']['text'] = 'Выбирите какую продукцию вы хотите:'
-            res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in
-                                          ['минеральная вода', 'кока-кола', 'пепси', 'сникерс']]
+            res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in ['минеральная вода', 'кока-кола', 'пепси','сникерс']]
         elif req['request']['command'] == 'Магазин-НеEда':
             return
         else:
@@ -200,7 +195,7 @@ def handle_dialog(req, res):
         if req['request']['command'] == 'минеральная вода':
             res['response']['text'] = 'Какую воду вы хотите?'
             res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in
-                                          ['газированная', 'негазированная']]
+                                          ['газированная','негазированная']]
         elif req['request']['command'] == 'кока-кола':
             return
         elif req['request']['command'] == 'пепси':
@@ -215,11 +210,11 @@ def handle_dialog(req, res):
         user_id_lib[user_id][4] = 6
         return
     if req['request']['command'] and user_id_lib[user_id][3] >= 2 and user_id_lib[user_id][4] == 6:
-        # ls2 = req['request']['command']
+        #ls2 = req['request']['command']
         if req['request']['command'] == 'газированная':
             res['response']['text'] = 'Какую объём воды вам нужен?'
             res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in
-                                          ['0.3', '0.5', '1']]
+                                          ['0.3','0.5','1']]
         elif req['request']['command'] == 'негазированная':
             res['response']['text'] = 'Какую объём воды вам нужен?'
             res['response']['buttons'] = [{'title': suggest, 'hide': True} for suggest in
@@ -239,12 +234,9 @@ def handle_dialog(req, res):
         return
     if req['request']['command'] and user_id_lib[user_id][3] >= 2 and user_id_lib[user_id][4] == 8:
         tf = req['request']['command']
-        p = sesaian_id[req['session']['session_id']][1]
-        st = ' У вас ' + tf + ' бутылки ' + ls2 + 'газированной менеральной воды по ' + str(
-            sesaian_id[req['session']['session_id']][3])
-        st = st + '. И того с вас: ' + sesaian_id[req['session']['session_id']][1] + ' + ' + str(
-            int(tf) * cost_water[1]) + ' = '
-        #st = st + str(p)
-        res['response']['text'] = str(p)
+        st = ' У вас ' + tf + ' бутылки ' + ls2 + 'газированной менеральной воды по ' + str(sesaian_id[req['session']['session_id']][3])
+        st = st + '. И того с вас: ' + sesaian_id[req['session']['session_id']][1] + ' + ' + str(int(tf)*cost_water[1]) + ' = '
+        st = st + str(int(tf)*cost_water[1] + int(sesaian_id[req['session']['session_id']][1]))
+        res['response']['text'] = st
         user_id_lib[user_id][4] = 9
         return
